@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/apis/firebase';
-import { useRouter } from 'next/router';  // If using Next.js routing
+import { useRouter } from 'next/router';
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
@@ -26,12 +26,9 @@ const LoginPage = () => {
             const userCredential = await signInWithEmailAndPassword(auth, username, password);
             const user = userCredential.user;
 
-            console.log('Login successful');
-            localStorage.setItem('user', JSON.stringify({
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-            }));
+            const authToken = await user.getIdToken();
+
+            localStorage.setItem('authToken', authToken);
 
             router.push('/dashboard');
         } catch (error) {
